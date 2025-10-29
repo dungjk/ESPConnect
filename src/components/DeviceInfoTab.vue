@@ -8,10 +8,19 @@
               <v-icon size="36">mdi-chip</v-icon>
             </v-avatar>
             <div class="device-header__text">
-              <div class="device-title">{{ chipDetails.description || chipDetails.name }}</div>
-              <div class="device-subtitle">{{ chipDetails.name }}</div>
+              <div class="device-chip-name">{{ chipDetails.name }}</div>
+              <div
+                v-if="hasDistinctDescription"
+                class="device-chip-description"
+              >
+                {{ chipDetails.description }}
+              </div>
+              <div v-if="revisionLabel" class="device-revision">
+                <v-icon size="18" class="me-2">mdi-update</v-icon>
+                {{ revisionLabel }}
+              </div>
               <div v-if="chipDetails.mac" class="device-meta">
-                <v-icon size="16" class="me-1">mdi-identifier</v-icon>
+                <v-icon size="16" class="me-1">mdi-wifi</v-icon>
                 {{ chipDetails.mac }}
               </div>
             </div>
@@ -121,11 +130,25 @@
 </template>
 
 <script setup>
-defineProps({
+import { computed } from 'vue';
+
+const props = defineProps({
   chipDetails: {
     type: Object,
     default: null,
   },
+});
+
+const revisionLabel = computed(() => {
+  const facts = props.chipDetails?.facts;
+  if (!Array.isArray(facts)) return null;
+  return facts.find(fact => fact.label === 'Revision')?.value ?? null;
+});
+
+const hasDistinctDescription = computed(() => {
+  if (!props.chipDetails) return false;
+  const { name, description } = props.chipDetails;
+  return Boolean(description) && description !== name;
 });
 </script>
 
@@ -165,30 +188,45 @@ defineProps({
 .device-header__text {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
 }
 
-.device-title {
-  font-size: clamp(1.2rem, 2.8vw, 1.6rem);
+.device-chip-name {
+  font-size: clamp(1.5rem, 3.4vw, 2.1rem);
+  font-weight: 650;
+  letter-spacing: 0.01em;
+  color: color-mix(in srgb, var(--v-theme-on-surface) 97%, transparent);
+}
+
+.device-chip-description {
+  font-size: clamp(1rem, 2.4vw, 1.25rem);
+  color: color-mix(in srgb, var(--v-theme-on-surface) 74%, transparent);
+}
+
+.device-revision {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--v-theme-primary) 18%, transparent);
+  color: color-mix(in srgb, var(--v-theme-on-primary) 90%, transparent);
+  font-size: 0.85rem;
   font-weight: 600;
-  color: color-mix(in srgb, var(--v-theme-on-surface) 96%, transparent);
-}
-
-.device-subtitle {
-  font-size: 0.95rem;
-  color: color-mix(in srgb, var(--v-theme-on-surface) 70%, transparent);
+  letter-spacing: 0.02em;
 }
 
 .device-meta {
   display: inline-flex;
   align-items: center;
-  margin-top: 6px;
-  padding: 4px 10px;
+  margin-top: 12px;
+  padding: 6px 14px;
   border-radius: 999px;
-  background: color-mix(in srgb, var(--v-theme-primary) 12%, transparent);
-  color: color-mix(in srgb, var(--v-theme-on-surface) 80%, transparent);
-  font-size: 0.8rem;
-  letter-spacing: 0.01em;
+  background: color-mix(in srgb, var(--v-theme-primary) 24%, transparent);
+  color: color-mix(in srgb, var(--v-theme-on-primary) 92%, transparent);
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
 }
 
 .device-metrics {
