@@ -6,7 +6,7 @@
         variant="outlined"
         density="comfortable"
         :disabled="monitorActive || !canStart"
-        @click="('start-monitor')"
+        @click="emit('start-monitor')"
       >
         <v-icon start>mdi-play-circle</v-icon>
         Start Monitor
@@ -16,7 +16,7 @@
         variant="outlined"
         density="comfortable"
         :disabled="!monitorActive"
-        @click="('stop-monitor')"
+        @click="emit('stop-monitor')"
       >
         <v-icon start>mdi-stop-circle</v-icon>
         Stop Monitor
@@ -26,7 +26,7 @@
         variant="outlined"
         density="comfortable"
         :disabled="!monitorText"
-        @click="('clear-monitor')"
+        @click="emit('clear-monitor')"
       >
         <v-icon start>mdi-eraser</v-icon>
         Clear
@@ -36,7 +36,7 @@
         variant="outlined"
         density="comfortable"
         :disabled="!canCommand"
-        @click="('reset-board')"
+        @click="emit('reset-board')"
       >
         <v-icon start>mdi-power-cycle</v-icon>
         Reset Board
@@ -98,6 +98,8 @@ const props = defineProps({
     default: false,
   },
 });
+
+const emit = defineEmits(['start-monitor', 'stop-monitor', 'clear-monitor', 'reset-board']);
 
 const outputEl = ref(null);
 
