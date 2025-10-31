@@ -1,21 +1,29 @@
 <template>
   <div class="monitor-shell">
-    <v-card class="monitor-panel" variant="flat">
-      <v-card-title class="monitor-toolbar">
-        <div class="monitor-toolbar__meta">
-          <v-icon class="monitor-toolbar__icon" size="20">
-            {{ monitorActive ? 'mdi-monitor-eye' : 'mdi-monitor-off' }}
-          </v-icon>
-          <span class="monitor-toolbar__title">Serial Monitor</span>
-          <span class="monitor-toolbar__status" :class="{ 'monitor-toolbar__status--live': monitorActive }">
-            {{ monitorActive ? 'Live stream' : 'Paused' }}
-          </span>
+    <v-card class="monitor-card" variant="tonal">
+      <v-card-title class="monitor-card__title">
+        <div class="monitor-card__heading">
+          <span class="monitor-card__badge" :class="{ 'monitor-card__badge--live': monitorActive }" />
+          <div class="monitor-card__label">
+            <v-icon class="me-2" size="20">mdi-monitor</v-icon>
+            Serial Monitor
+          </div>
+          <v-chip
+            class="monitor-card__status"
+            :color="monitorActive ? 'success' : 'grey-darken-1'"
+            size="small"
+            density="comfortable"
+            label
+          >
+            <v-icon size="16" start>mdi-circle-medium</v-icon>
+            {{ monitorActive ? 'Live' : 'Stopped' }}
+          </v-chip>
         </div>
-        <div class="monitor-toolbar__actions">
+        <div class="monitor-card__actions">
           <v-btn
             color="primary"
             variant="tonal"
-            density="comfortable"
+            size="small"
             prepend-icon="mdi-play-circle"
             :disabled="monitorActive || !canStart"
             @click="emit('start-monitor')"
@@ -25,7 +33,7 @@
           <v-btn
             color="primary"
             variant="text"
-            density="comfortable"
+            size="small"
             prepend-icon="mdi-stop-circle"
             :disabled="!monitorActive"
             @click="emit('stop-monitor')"
@@ -35,7 +43,7 @@
           <v-btn
             color="surface"
             variant="text"
-            density="comfortable"
+            size="small"
             prepend-icon="mdi-eraser"
             :disabled="!monitorText"
             @click="emit('clear-monitor')"
@@ -45,7 +53,7 @@
           <v-btn
             color="error"
             variant="tonal"
-            density="comfortable"
+            size="small"
             prepend-icon="mdi-power-cycle"
             :disabled="!canCommand"
             @click="emit('reset-board')"
@@ -54,31 +62,11 @@
           </v-btn>
         </div>
       </v-card-title>
-
-      <v-divider class="monitor-divider" />
-
-      <v-card-text class="monitor-output-wrapper">
-        <div class="monitor-output-surface">
-          <div class="monitor-output__header">
-            <span class="monitor-output__label">
-              <v-icon size="16" class="me-2">mdi-console</v-icon>
-              Console Stream
-            </span>
-            <v-chip
-              class="monitor-output__chip"
-              :color="monitorActive ? 'success' : 'grey-darken-1'"
-              density="comfortable"
-              size="small"
-              label
-            >
-              <v-icon size="16" start>mdi-circle-medium</v-icon>
-              {{ monitorActive ? 'Streaming' : 'Idle' }}
-            </v-chip>
-          </div>
-          <pre ref="outputEl" class="monitor-output">
-{{ monitorText || 'Serial data will appear here once the monitor is started.' }}
-          </pre>
-        </div>
+      <v-divider />
+      <v-card-text class="monitor-terminal">
+        <pre ref="outputEl" class="monitor-terminal__output">
+{{ monitorText || 'Monitor output will appear here once started.' }}
+        </pre>
       </v-card-text>
     </v-card>
 
@@ -141,153 +129,102 @@ watch(
   gap: 16px;
 }
 
-.monitor-panel {
-  border-radius: 20px;
-  border: 1px solid color-mix(in srgb, var(--v-theme-primary) 16%, transparent);
-  background: linear-gradient(
-      145deg,
-      color-mix(in srgb, var(--v-theme-surface) 96%, transparent) 0%,
-      color-mix(in srgb, var(--v-theme-primary) 10%, transparent) 60%,
-      color-mix(in srgb, var(--v-theme-secondary) 12%, transparent) 100%
-    ),
-    linear-gradient(145deg, rgba(255, 255, 255, 0.04), transparent);
-  box-shadow: 0 16px 32px rgba(15, 23, 42, 0.12);
+.monitor-card {
+  border-radius: 18px;
+  border: 1px solid color-mix(in srgb, var(--v-theme-primary) 18%, transparent);
+  background: color-mix(in srgb, var(--v-theme-surface) 92%, transparent);
   overflow: hidden;
 }
 
-.monitor-toolbar {
+.monitor-card__title {
   display: flex;
+  align-items: center;
+  gap: 16px;
   justify-content: space-between;
-  align-items: flex-start;
-  gap: 18px;
-  padding: 20px clamp(16px, 4vw, 26px);
 }
 
-.monitor-toolbar__meta {
-  display: flex;
+.monitor-card__heading {
+  display: inline-flex;
   align-items: center;
   gap: 12px;
 }
 
-.monitor-toolbar__icon {
-  color: color-mix(in srgb, var(--v-theme-primary) 82%, transparent);
+.monitor-card__badge {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--v-theme-on-surface) 45%, transparent);
+  box-shadow: 0 0 0 2px rgba(15, 23, 42, 0.12);
 }
 
-.monitor-toolbar__title {
-  font-size: 1.05rem;
-  font-weight: 650;
-  letter-spacing: 0.01em;
-  color: color-mix(in srgb, var(--v-theme-on-surface) 95%, transparent);
+.monitor-card__badge--live {
+  background: color-mix(in srgb, var(--v-theme-success) 85%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--v-theme-success) 35%, transparent);
 }
 
-.monitor-toolbar__status {
-  font-size: 0.78rem;
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  color: color-mix(in srgb, var(--v-theme-on-surface) 55%, transparent);
-}
-
-.monitor-toolbar__status--live {
-  color: color-mix(in srgb, var(--v-theme-success) 70%, var(--v-theme-on-surface) 30%);
-}
-
-.monitor-toolbar__actions {
+.monitor-card__label {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.monitor-card__status {
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.monitor-card__actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   flex-wrap: wrap;
   justify-content: flex-end;
 }
 
-.monitor-divider {
-  opacity: 0.28;
-}
-
-.monitor-output-wrapper {
-  padding: 0 clamp(16px, 3.4vw, 26px) clamp(18px, 4vw, 32px);
-}
-
-.monitor-output-surface {
-  border-radius: 18px;
-  padding: 18px 20px;
-  background: radial-gradient(
-      circle at 20% 20%,
-      color-mix(in srgb, var(--v-theme-primary) 22%, transparent) 0%,
-      transparent 65%
-    ),
-    radial-gradient(
-      circle at 80% 25%,
-      color-mix(in srgb, var(--v-theme-secondary) 18%, transparent) 0%,
-      transparent 60%
-    ),
-    color-mix(in srgb, var(--v-theme-surface) 88%, transparent);
-  border: 1px solid color-mix(in srgb, var(--v-theme-primary) 20%, transparent);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
-  position: relative;
-}
-
-.monitor-output__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 10px;
-}
-
-.monitor-output__label {
-  display: inline-flex;
-  align-items: center;
-  font-weight: 600;
-  font-size: 0.88rem;
-  color: color-mix(in srgb, var(--v-theme-on-surface) 85%, transparent);
-  letter-spacing: 0.015em;
-}
-
-.monitor-output__chip {
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
-}
-
-.monitor-output {
-  margin: 0;
-  padding: 16px 0 12px;
-  min-height: 260px;
-  max-height: 540px;
+.monitor-terminal {
+  background: rgba(15, 23, 42, 0.85);
+  border-radius: 12px;
+  padding: 14px;
+  max-height: 420px;
   overflow-y: auto;
-  white-space: pre-wrap;
-  word-break: break-word;
-  font-family: 'Fira Code', 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
-  font-size: 0.9rem;
-  line-height: 1.48;
-  color: color-mix(in srgb, var(--v-theme-on-surface) 94%, transparent);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
 }
 
-.monitor-output::-webkit-scrollbar {
+.monitor-terminal::-webkit-scrollbar {
   width: 8px;
 }
 
-.monitor-output::-webkit-scrollbar-thumb {
-  background: color-mix(in srgb, var(--v-theme-primary) 40%, transparent);
+.monitor-terminal::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.35);
   border-radius: 999px;
 }
 
+.monitor-terminal__output {
+  margin: 0;
+  font-family: 'Roboto Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  font-size: 0.9rem;
+  line-height: 1.48;
+  white-space: pre-wrap;
+  color: rgba(226, 232, 240, 0.9);
+  min-height: 260px;
+}
+
 .monitor-alert {
-  margin-top: 6px;
+  margin-top: 4px;
 }
 
 @media (max-width: 959px) {
-  .monitor-toolbar {
+  .monitor-card__title {
     flex-direction: column;
     align-items: flex-start;
   }
 
-  .monitor-toolbar__actions {
+  .monitor-card__actions {
     width: 100%;
     justify-content: flex-start;
-    gap: 8px;
-  }
-
-  .monitor-output-wrapper {
-    padding-inline: clamp(12px, 3vw, 20px);
   }
 }
 </style>
