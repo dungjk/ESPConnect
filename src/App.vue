@@ -189,6 +189,7 @@
                 :flash-read-status-type="flashReadStatusType"
                 :partition-options="partitionDownloadOptions"
                 :selected-partition="selectedPartitionDownload"
+                :integrity-partition="integrityPartition"
                 :download-progress="downloadProgress"
                 @firmware-input="handleFirmwareInput"
                 @flash="flashFirmware"
@@ -203,6 +204,7 @@
                 @update:flash-read-offset="value => (flashReadOffset.value = value)"
                 @update:flash-read-length="value => (flashReadLength.value = value)"
                 @update:selected-partition="handleSelectPartition"
+                @update:integrity-partition="handleSelectIntegrityPartition"
                 @download-flash="handleDownloadFlash"
                 @download-partition="handleDownloadPartition"
                 @download-all-partitions="handleDownloadAllPartitions"
@@ -753,6 +755,7 @@ const flashOffset = ref('0x0');
 const eraseFlash = ref(false);
 const selectedPreset = ref(null);
 const selectedPartitionDownload = ref(null);
+const integrityPartition = ref(null);
 const currentBaud = ref(DEFAULT_ROM_BAUD);
 const baudChangeBusy = ref(false);
 const maintenanceBusy = ref(false);
@@ -1398,6 +1401,27 @@ watch(partitionDownloadOptions, options => {
     selectedPartitionDownload.value = null;
     flashReadOffset.value = '0x0';
     flashReadLength.value = '';
+  }
+  if (!options.some(option => option.value === integrityPartition.value)) {
+    integrityPartition.value = null;
+  }
+});
+
+watch([md5Offset, md5Length], ([offsetValue, lengthValue]) => {
+  if (integrityPartition.value == null) {
+    return;
+  }
+  const option = partitionOptionLookup.value.get(integrityPartition.value);
+  if (!option) {
+    integrityPartition.value = null;
+    return;
+  }
+  const normalizedOffset = normalizeRegisterAddressValue(offsetValue);
+  const expectedOffset = normalizeRegisterAddressValue(option.offsetHex);
+  const normalizedLength = normalizeRegisterAddressValue(lengthValue);
+  const expectedLength = normalizeRegisterAddressValue('0x' + option.size.toString(16).toUpperCase());
+  if (normalizedOffset !== expectedOffset || normalizedLength !== expectedLength) {
+    integrityPartition.value = null;
   }
 });
 
@@ -2118,6 +2142,7 @@ function resetMaintenanceState() {
   md5StatusType.value = 'info';
   md5Offset.value = '0x0';
   md5Length.value = '';
+  integrityPartition.value = null;
   flashReadStatus.value = null;
   flashReadStatusType.value = 'info';
   flashReadOffset.value = '0x0';
@@ -2595,6 +2620,28 @@ function handleSelectPartition(value) {
   } else {
     flashReadOffset.value = '0x0';
     flashReadLength.value = '';
+  }
+}
+
+function handleSelectIntegrityPartition(value) {
+  integrityPartition.value = value;
+  const option = partitionOptionLookup.value.get(value);
+  if (option) {
+    md5Offset.value = option.offsetHex;
+    md5Length.value = '0x' + option.size.toString(16).toUpperCase();
+    md5Status.value = null;
+    md5Result.value = null;
+    md5StatusType.value = 'info';
+    appendLog(
+      `Flash integrity region set to ${option.baseLabel} (${option.offsetHex}, ${md5Length.value}).`,
+      '[debug]'
+    );
+  } else if (value == null) {
+    appendLog('Flash integrity partition selection cleared.', '[debug]');
+  } else {
+    md5StatusType.value = 'warning';
+    md5Status.value = 'Selected partition is unavailable.';
+    md5Result.value = null;
   }
 }
 

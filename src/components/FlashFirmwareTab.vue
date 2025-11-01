@@ -68,68 +68,6 @@
 
   <v-divider class="my-6" />
 
-  <v-card class="tools-card" variant="tonal">
-    <v-card-title class="tools-card__title">
-      <v-icon size="18" class="me-2">mdi-shield-check-outline</v-icon>
-      Flash Integrity
-    </v-card-title>
-    <v-card-text class="tools-card__body">
-      <v-row dense class="flash-progress-row">
-        <v-col cols="12" md="6">
-          <v-text-field
-            :model-value="md5Offset"
-            label="Start offset"
-            placeholder="0x0"
-            density="comfortable"
-            :disabled="busy || maintenanceBusy"
-            @update:model-value="value => emit('update:md5Offset', value)"
-          />
-        </v-col>
-        <v-col cols="12" md="6">
-          <v-text-field
-            :model-value="md5Length"
-            label="Length (bytes)"
-            placeholder="0x100000"
-            density="comfortable"
-            :disabled="busy || maintenanceBusy"
-            @update:model-value="value => emit('update:md5Length', value)"
-          />
-        </v-col>
-      </v-row>
-      <div class="tools-card__actions">
-        <v-btn
-          color="primary"
-          variant="tonal"
-          :disabled="busy || maintenanceBusy"
-          @click="emit('compute-md5')"
-        >
-          <v-icon start>mdi-fingerprint</v-icon>
-          Compute MD5
-        </v-btn>
-      </div>
-      <v-alert
-        v-if="md5Status"
-        :type="md5StatusType"
-        variant="tonal"
-        density="comfortable"
-        border="start"
-        class="mt-3"
-      >
-        {{ md5Status }}
-      </v-alert>
-      <v-alert
-        v-else-if="md5Result"
-        type="success"
-        variant="tonal"
-        density="comfortable"
-        border="start"
-        class="mt-3"
-      >
-        MD5 checksum: <code>{{ md5Result }}</code>
-      </v-alert>
-    </v-card-text>
-  </v-card>
-
   <v-card class="tools-card mt-6" variant="tonal">
     <v-card-title class="tools-card__title">
       <v-icon size="18" class="me-2">mdi-archive-arrow-down</v-icon>
@@ -359,6 +297,84 @@
       </v-alert>
     </v-card-text>
   </v-card>
+  <v-card class="tools-card mt-6" variant="tonal">
+    <v-card-title class="tools-card__title">
+      <v-icon size="18" class="me-2">mdi-shield-check-outline</v-icon>
+      Flash Integrity
+    </v-card-title>
+    <v-card-text class="tools-card__body">
+      <v-select
+        v-if="partitionOptions.length"
+        class="integrity-select"
+        :items="partitionOptions"
+        item-title="label"
+        item-value="value"
+        variant="outlined"
+        density="comfortable"
+        clearable
+        label="Partition"
+        :model-value="integrityPartition"
+        :disabled="busy || maintenanceBusy"
+        @update:model-value="handleIntegrityPartitionSelect"
+      />
+      <p v-if="partitionOptions.length" class="integrity-helper">
+        Selecting a partition will auto-fill the offset and length fields below.
+      </p>
+      <v-row dense class="flash-progress-row">
+        <v-col cols="12" md="6">
+          <v-text-field
+            :model-value="md5Offset"
+            label="Start offset"
+            placeholder="0x0"
+            density="comfortable"
+            :disabled="busy || maintenanceBusy"
+            @update:model-value="value => emit('update:md5Offset', value)"
+          />
+        </v-col>
+        <v-col cols="12" md="6">
+          <v-text-field
+            :model-value="md5Length"
+            label="Length (bytes)"
+            placeholder="0x100000"
+            density="comfortable"
+            :disabled="busy || maintenanceBusy"
+            @update:model-value="value => emit('update:md5Length', value)"
+          />
+        </v-col>
+      </v-row>
+      <div class="tools-card__actions">
+        <v-btn
+          color="primary"
+          variant="tonal"
+          :disabled="busy || maintenanceBusy"
+          @click="emit('compute-md5')"
+        >
+          <v-icon start>mdi-fingerprint</v-icon>
+          Compute MD5
+        </v-btn>
+      </div>
+      <v-alert
+        v-if="md5Status"
+        :type="md5StatusType"
+        variant="tonal"
+        density="comfortable"
+        border="start"
+        class="mt-3"
+      >
+        {{ md5Status }}
+      </v-alert>
+      <v-alert
+        v-else-if="md5Result"
+        type="success"
+        variant="tonal"
+        density="comfortable"
+        border="start"
+        class="mt-3"
+      >
+        MD5 checksum: <code>{{ md5Result }}</code>
+      </v-alert>
+    </v-card-text>
+  </v-card>
   <v-dialog
     :model-value="flashProgressDialog.visible"
     persistent
@@ -550,6 +566,10 @@ const props = defineProps({
     type: [String, Number],
     default: null,
   },
+  integrityPartition: {
+    type: [String, Number],
+    default: null,
+  },
   downloadProgress: {
     type: Object,
     default: () => ({ visible: false, value: 0, label: '' }),
@@ -581,6 +601,7 @@ const emit = defineEmits([
   'erase-flash',
   'cancel-download',
   'select-register',
+  'update:integrityPartition',
 ]);
 
 function handlePresetChange(value) {
@@ -590,6 +611,10 @@ function handlePresetChange(value) {
 
 const selectedRegisterAddress = ref(null);
 const selectedRegisterInfo = ref(null);
+
+function handleIntegrityPartitionSelect(value) {
+  emit('update:integrityPartition', value);
+}
 
 function normalizeRegisterAddress(value) {
   if (!value) return null;
@@ -736,5 +761,15 @@ function handleRegisterSelect(value) {
 .advanced-warning {
   font-size: 0.9rem;
   line-height: 1.4;
+}
+
+.integrity-select {
+  max-width: 420px;
+}
+
+.integrity-helper {
+  font-size: 0.85rem;
+  color: color-mix(in srgb, var(--v-theme-on-surface) 70%, transparent);
+  margin-top: -4px;
 }
 </style>
