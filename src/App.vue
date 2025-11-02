@@ -65,9 +65,6 @@
           <v-alert v-if="!serialSupported" type="error" class="mb-4" variant="tonal" icon="mdi-alert-circle-outline">
             This browser does not support the Web Serial API. Use Chrome, Edge, or another Chromium-based browser.
           </v-alert>
-
-          <v-divider class="my-4" />
-
           <v-window v-model="activeTab" class="app-tab-content">
             <v-window-item value="info">
               <DeviceInfoTab :chip-details="chipDetails" />
