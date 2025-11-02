@@ -747,6 +747,7 @@ const props = defineProps({
       error: null,
       uploading: false,
       busy: false,
+      commandActive: false,
       running: false,
       status: '',
       files: [],
@@ -806,7 +807,12 @@ const spiffsAgentLoading = computed(() => Boolean(props.spiffsAgentStatus?.loadi
 const spiffsAgentLoaded = computed(() => Boolean(props.spiffsAgentStatus?.loaded));
 const spiffsAgentUploading = computed(() => Boolean(props.spiffsAgentStatus?.uploading));
 const spiffsAgentBusy = computed(
-  () => Boolean(props.spiffsAgentStatus?.busy || props.spiffsAgentStatus?.uploading)
+  () =>
+    Boolean(
+      props.spiffsAgentStatus?.busy ||
+        props.spiffsAgentStatus?.uploading ||
+        props.spiffsAgentStatus?.commandActive,
+    )
 );
 const spiffsAgentRunning = computed(() => Boolean(props.spiffsAgentStatus?.running));
 const spiffsAgentFiles = computed(() =>
@@ -824,7 +830,8 @@ const spiffsAgentSummary = computed(() => {
   const status = props.spiffsAgentStatus || {};
   if (status.loading) return 'Loading stub...';
   if (status.uploading) return 'Uploading stub to device...';
-  if (status.busy && status.running) return 'Agent is busy processing a command...';
+  if ((status.commandActive || status.busy) && status.running)
+    return 'Agent is busy processing a command...';
   if (status.error) return `Error: ${status.error}`;
   if (status.running) return 'Agent running on device.';
   if (status.loaded) {

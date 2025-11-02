@@ -808,6 +808,7 @@ const spiffsAgent = reactive({
   uploading: false,
   running: false,
   busy: false,
+  commandActive: false,
   status: '',
   files: [],
 });
@@ -832,6 +833,11 @@ function clearSpiffsAgentDecoder() {
   spiffsAgentRuntime.buffer = '';
 }
 
+function setSpiffsAgentCommandActive(active) {
+  spiffsAgentRuntime.commandActive = active;
+  spiffsAgent.commandActive = active;
+}
+
 function setSpiffsAgentIdleStatus() {
   if (spiffsAgent.loaded) {
     const sizeLabel = spiffsAgent.size ? spiffsAgent.size.toLocaleString() : 'unknown';
@@ -853,6 +859,7 @@ function resetSpiffsAgentSession(options = {}) {
     spiffsAgent.size = 0;
   }
   clearSpiffsAgentDecoder();
+  setSpiffsAgentCommandActive(false);
   setSpiffsAgentIdleStatus();
 }
 
@@ -3045,6 +3052,7 @@ async function handleDeploySpiffsAgent() {
       loaderInstance.baudrate = previousBaud;
       transportInstance.baudrate = previousBaud;
     }
+    setSpiffsAgentCommandActive(false);
     spiffsAgent.uploading = false;
     spiffsAgent.busy = false;
     maintenanceBusy.value = false;
@@ -3073,7 +3081,7 @@ async function handleListSpiffsFiles(options = {}) {
     spiffsAgent.error = null;
   }
   try {
-    spiffsAgentRuntime.commandActive = true;
+    setSpiffsAgentCommandActive(true);
     if (!silent) {
       spiffsAgent.status = 'Listing SPIFFS files...';
     }
@@ -3095,7 +3103,7 @@ async function handleListSpiffsFiles(options = {}) {
     }
     appendLog(`SPIFFS agent list failed: ${message}`, '[warn]');
   } finally {
-    spiffsAgentRuntime.commandActive = false;
+    setSpiffsAgentCommandActive(false);
     if (!silent) {
       spiffsAgent.busy = false;
     }
@@ -3125,7 +3133,7 @@ async function handleDeleteSpiffsFile(name) {
   spiffsAgent.busy = true;
   spiffsAgent.error = null;
   try {
-    spiffsAgentRuntime.commandActive = true;
+    setSpiffsAgentCommandActive(true);
     spiffsAgent.status = `Deleting ${target}...`;
     await writeSpiffsAgentLines([`DELETE ${target}`]);
     const response = await readSpiffsAgentLine({ skipEmpty: true });
@@ -3145,7 +3153,7 @@ async function handleDeleteSpiffsFile(name) {
     spiffsAgent.status = `Delete failed: ${message}`;
     appendLog(`SPIFFS agent delete failed: ${message}`, '[warn]');
   } finally {
-    spiffsAgentRuntime.commandActive = false;
+    setSpiffsAgentCommandActive(false);
     spiffsAgent.busy = false;
   }
 }
@@ -3185,7 +3193,7 @@ async function handleUploadSpiffsFile(payload) {
   spiffsAgent.busy = true;
   spiffsAgent.error = null;
   try {
-    spiffsAgentRuntime.commandActive = true;
+    setSpiffsAgentCommandActive(true);
     spiffsAgent.status = `Uploading ${name} (${data.length.toLocaleString()} bytes)...`;
     const port = currentPort.value;
     if (!port?.writable) {
@@ -3230,7 +3238,7 @@ async function handleUploadSpiffsFile(payload) {
     spiffsAgent.status = `Upload failed: ${message}`;
     appendLog(`SPIFFS agent upload failed: ${message}`, '[warn]');
   } finally {
-    spiffsAgentRuntime.commandActive = false;
+    setSpiffsAgentCommandActive(false);
     spiffsAgent.busy = false;
   }
 }
@@ -3258,7 +3266,7 @@ async function handleDownloadSpiffsFile(name) {
   spiffsAgent.busy = true;
   spiffsAgent.error = null;
   try {
-    spiffsAgentRuntime.commandActive = true;
+    setSpiffsAgentCommandActive(true);
     spiffsAgent.status = `Reading ${target}...`;
     await writeSpiffsAgentLines([`READ ${target}`]);
     const header = await readSpiffsAgentLine({ skipEmpty: true });
@@ -3290,7 +3298,7 @@ async function handleDownloadSpiffsFile(name) {
     spiffsAgent.status = `Download failed: ${message}`;
     appendLog(`SPIFFS agent download failed: ${message}`, '[warn]');
   } finally {
-    spiffsAgentRuntime.commandActive = false;
+    setSpiffsAgentCommandActive(false);
     spiffsAgent.busy = false;
   }
 }
@@ -3310,7 +3318,7 @@ async function handleFormatSpiffsAgent() {
   spiffsAgent.busy = true;
   spiffsAgent.error = null;
   try {
-    spiffsAgentRuntime.commandActive = true;
+    setSpiffsAgentCommandActive(true);
     spiffsAgent.status = 'Formatting SPIFFS...';
     await writeSpiffsAgentLines(['FORMAT']);
     const response = await readSpiffsAgentLine({ skipEmpty: true });
@@ -3329,7 +3337,7 @@ async function handleFormatSpiffsAgent() {
     spiffsAgent.status = `Format failed: ${message}`;
     appendLog(`SPIFFS agent format failed: ${message}`, '[warn]');
   } finally {
-    spiffsAgentRuntime.commandActive = false;
+    setSpiffsAgentCommandActive(false);
     spiffsAgent.busy = false;
   }
 }
@@ -3349,7 +3357,7 @@ async function handleResetSpiffsAgent() {
   spiffsAgent.busy = true;
   spiffsAgent.error = null;
   try {
-    spiffsAgentRuntime.commandActive = true;
+    setSpiffsAgentCommandActive(true);
     spiffsAgent.status = 'Resetting device...';
     await writeSpiffsAgentLines(['RESET']);
     let response = null;
@@ -3370,7 +3378,7 @@ async function handleResetSpiffsAgent() {
     appendLog(`SPIFFS agent reset failed: ${message}`, '[warn]');
     return;
   } finally {
-    spiffsAgentRuntime.commandActive = false;
+    setSpiffsAgentCommandActive(false);
     spiffsAgent.busy = false;
     spiffsAgent.running = false;
     spiffsAgent.files = [];
