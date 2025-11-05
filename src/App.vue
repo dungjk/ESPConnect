@@ -897,12 +897,17 @@ function extractAppDescriptor(buffer) {
       continue;
     }
     const view = buffer.subarray(offset, offset + APP_DESCRIPTOR_LENGTH);
+    const versionOffset = 16;
+    const projectOffset = versionOffset + 32;
+    const timeOffset = projectOffset + 32;
+    const dateOffset = timeOffset + 16;
+    const idfOffset = dateOffset + 16;
     const descriptor = {
-      version: decodeCString(view.subarray(12, 12 + 32)),
-      projectName: decodeCString(view.subarray(44, 44 + 32)),
-      time: decodeCString(view.subarray(76, 76 + 16)),
-      date: decodeCString(view.subarray(92, 92 + 16)),
-      idfVersion: decodeCString(view.subarray(108, 108 + 32)),
+      version: decodeCString(view.subarray(versionOffset, versionOffset + 32)),
+      projectName: decodeCString(view.subarray(projectOffset, projectOffset + 32)),
+      time: decodeCString(view.subarray(timeOffset, timeOffset + 16)),
+      date: decodeCString(view.subarray(dateOffset, dateOffset + 16)),
+      idfVersion: decodeCString(view.subarray(idfOffset, idfOffset + 32)),
     };
     return descriptor;
   }
