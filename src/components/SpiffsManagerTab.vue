@@ -121,26 +121,54 @@
             Free {{ formatSize(usage.freeBytes) }}
           </div>
         </div>
-        <div class="upload-row">
-          <v-file-input
-            v-model="uploadFile"
-            density="comfortable"
-            accept="*/*"
-            label="Select file"
-            prepend-icon="mdi-file-upload"
-            :disabled="readOnly || !hasClient || loading || busy || saving"
-          />
-          <v-btn
-            color="primary"
-            variant="tonal"
-            class="upload-row__cta"
-            :disabled="readOnly || !uploadFile || !hasClient || loading || busy || saving || uploadBlocked"
-            @click="submitUpload"
-          >
-            <v-icon start>mdi-upload</v-icon>
-            Upload
-          </v-btn>
+        <div
+          class="spiffs-dropzone"
+          :class="{ 'spiffs-dropzone--active': dragActive }"
+          @dragover.prevent="handleDragOver"
+          @dragleave.prevent="handleDragLeave"
+          @drop.prevent="handleDrop"
+        >
+          <div class="spiffs-dropzone__hint">
+            <v-icon size="32">mdi-cloud-upload-outline</v-icon>
+            <div class="spiffs-dropzone__hint-text">
+              <strong>Drop files to upload</strong>
+              <span>or use the picker below</span>
+            </div>
+          </div>
+          <div v-if="dragActive" class="spiffs-dropzone__overlay">
+            Release to upload
+          </div>
+          <div class="upload-row">
+            <v-file-input
+              v-model="uploadFile"
+              density="comfortable"
+              accept="*/*"
+              label="Select file"
+              prepend-icon="mdi-file-upload"
+              :disabled="readOnly || !hasClient || loading || busy || saving"
+            />
+            <v-btn
+              color="primary"
+              variant="tonal"
+              class="upload-row__cta"
+              :disabled="readOnly || !uploadFile || !hasClient || loading || busy || saving || uploadBlocked"
+              @click="submitUpload"
+            >
+              <v-icon start>mdi-upload</v-icon>
+              Upload
+            </v-btn>
+          </div>
         </div>
+        <v-alert
+          v-if="uploadBlocked && uploadBlockedReason"
+          type="error"
+          variant="tonal"
+          density="comfortable"
+          border="start"
+          class="mt-3"
+        >
+          {{ uploadBlockedReason }}
+        </v-alert>
         <v-alert
           v-if="uploadBlocked && uploadBlockedReason"
           type="error"
@@ -312,9 +340,32 @@ const usagePercent = computed(() => {
   }
   return Math.min(100, Math.round(ratio * 100));
 });
+const dragActive = ref(false);
+const canUpload = computed(
+  () =>
+    !props.readOnly &&
+    props.hasClient &&
+    !props.loading &&
+    !props.busy &&
+    !props.saving,
+);
 
-function submitUpload() {
-  if (!uploadFile.value) return;
+watch(uploadFile, file => {
+  emit('validate-upload', file || null);
+});
+
+watch(
+  () => [uploadFile.value, props.uploadBlocked],
+  ([file, blocked]) => {
+    if (file && !blocked) {
+      submitUpload(true);
+    }
+  },
+  { flush: 'post' },
+);
+
+function submitUpload(auto = false) {
+  if (!uploadFile.value || props.uploadBlocked) return;
   emit('upload-file', { file: uploadFile.value });
   uploadFile.value = null;
 }
@@ -331,6 +382,31 @@ function handleRestoreFile(event) {
   event.target.value = '';
 }
 
+function handleDragOver(event) {
+  if (!canUpload.value) {
+    event.dataTransfer.dropEffect = 'none';
+    dragActive.value = false;
+    return;
+  }
+  event.dataTransfer.dropEffect = 'copy';
+  dragActive.value = true;
+}
+
+function handleDragLeave(event) {
+  if (event.currentTarget && event.relatedTarget && event.currentTarget.contains(event.relatedTarget)) {
+    return;
+  }
+  dragActive.value = false;
+}
+
+function handleDrop(event) {
+  dragActive.value = false;
+  if (!canUpload.value) return;
+  const file = event.dataTransfer?.files?.[0];
+  if (!file) return;
+  uploadFile.value = file;
+}
+
 function formatSize(size) {
   if (!Number.isFinite(size)) return '-';
   if (size < 1024) return `${size} B`;
@@ -345,6 +421,7 @@ function isViewable(name) {
   return Boolean(props.isFileViewable(name));
 }
 </script>
+
 
 <style scoped>
 .spiffs-manager {
@@ -393,7 +470,46 @@ function isViewable(name) {
 .spiffs-table code {
   font-size: 0.85rem;
 }
+
+.spiffs-dropzone {
+  position: relative;
+  border: 2px dashed transparent;
+  border-radius: 12px;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.spiffs-dropzone--active {
+  border-color: color-mix(in srgb, var(--v-theme-primary) 60%, transparent);
+  background-color: color-mix(in srgb, var(--v-theme-primary) 10%, transparent);
+}
+
+.spiffs-dropzone__overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: color-mix(in srgb, var(--v-theme-primary) 80%, #ffffff 20%);
+  pointer-events: none;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.spiffs-dropzone__hint {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: color-mix(in srgb, var(--v-theme-on-surface) 80%, transparent);
+  margin-bottom: 8px;
+}
+
+.spiffs-dropzone__hint-text {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.9rem;
+  text-transform: none;
+}
 </style>
-watch(uploadFile, file => {
-  emit('validate-upload', file);
-});
