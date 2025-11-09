@@ -67,7 +67,7 @@
         <div v-if="usage?.capacityBytes" class="filesystem-usage">
           <div class="">
             <span>Used {{ usagePercent }}% ({{ formatSize(usage.usedBytes) }} / {{ formatSize(usage.capacityBytes)
-              }})</span>
+            }})</span>
             <span></span>
           </div>
           <v-progress-linear :model-value="usagePercent" height="15" rounded color="primary" />
@@ -78,14 +78,21 @@
         <div>
           <v-row>
             <v-col>
-              <v-file-input v-model="uploadFile" density="comfortable" accept="*/*" label="Select file"
-                prepend-icon="mdi-file-upload" :disabled="readOnly || !hasClient || loading || busy || saving" />
-              <v-btn color="primary" variant="tonal"
-                :disabled="readOnly || !uploadFile || !hasClient || loading || busy || saving || uploadBlocked"
-                @click="submitUpload">
-                <v-icon start>mdi-upload</v-icon>
-                Upload
-              </v-btn>
+              <div>
+                <v-file-input v-model="uploadFile" density="comfortable" accept="*/*" label="Select file"
+                  prepend-icon="mdi-file-upload" class="upload-picker"
+                  :disabled="readOnly || !hasClient || loading || busy || saving" />
+              </div>
+            </v-col>
+            <v-col>
+              <div>
+                <v-btn color="primary" variant="tonal"
+                  :disabled="readOnly || !uploadFile || !hasClient || loading || busy || saving || uploadBlocked"
+                  @click="submitUpload">
+                  <v-icon start>mdi-upload</v-icon>
+                  Upload
+                </v-btn>
+              </div>
             </v-col>
             <v-col>
               <div class="filesystem-dropzone" :class="{ 'filesystem-dropzone--active': dragActive }"
@@ -648,8 +655,6 @@ function previewLabel(name) {
   border: 2px dashed transparent;
   border-radius: 12px;
   transition: border-color 0.2s ease, background-color 0.2s ease;
-  padding: 20px;
-  display: flex;
   align-items: center;
   justify-content: center;
 }
