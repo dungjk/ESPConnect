@@ -149,10 +149,6 @@
       </v-card-text>
     </v-card>
 
-    <v-alert type="info" variant="tonal" density="comfortable" border="start" class="mt-4">
-      {{ status }}
-    </v-alert>
-
     <input ref="restoreInput" type="file" class="d-none" @change="handleRestoreFile" />
   </div>
 </template>
