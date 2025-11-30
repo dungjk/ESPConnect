@@ -66,7 +66,13 @@ cd ESPConnect
 npm install
 npm run dev
 ```
-### 2. Run the Built Version Locally (Static Server)
+### 2. Run ESPConnect via Docker
+
+```bash
+docker build -t espconnect .
+docker run --rm -p 8080:80 espconnect
+```
+### 3. Run the Built Version Locally (Static Server)
 Step 1 — Build the App
 ```bash
 npm install
