@@ -52,7 +52,10 @@ ESPConnect is a browser-based control center for ESP32- and ESP8266-class boards
 - If automatic boot entry fails, hold **BOOT**, tap **RESET**, keep holding **BOOT** while clicking **Connect**, then release when you see the ESP-ROM banner.  
 - Only one application can use the USB serial bridge at a time. Close Arduino IDE, PlatformIO, or other tools before connecting.  
 - You can change baud rate even after connecting. If transfers stall, drop to 460800 or 115200 bps.  
-- Cancelling a flash or download pauses safely. Simply run it again when you’re ready.  
+- Cancelling a flash or download pauses safely. Simply run it again when you’re ready. 
+### ESP8266 Compatibility
+>ESP8266 devices can connect, but support is very limited.
+The tool cannot read partition tables or access SPIFFS/LittleFS, and advanced features available on ESP32 are not implemented for ESP8266.
 
 ## Running ESPConnect Locally
 ESPConnect is a **pure in-browser web application** — no backend, no installation required, and all operations happen directly in your browser using Web Serial / WebUSB.
