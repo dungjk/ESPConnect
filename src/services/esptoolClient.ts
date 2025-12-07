@@ -51,6 +51,13 @@ export interface EsptoolOptions {
   onStatus?: StatusCallback;
 }
 
+export async function requestSerialPort(filters?: SerialPortFilter[]) {
+  if (!navigator?.serial?.requestPort) {
+    throw new Error('Web Serial API not available in this browser.');
+  }
+  return navigator.serial.requestPort(filters ? { filters } : undefined);
+}
+
 export interface EsptoolClient {
   loader: CompatibleLoader;
   transport: CompatibleTransport;

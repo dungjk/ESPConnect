@@ -613,11 +613,10 @@ import SerialMonitorTab from './components/SerialMonitorTab.vue';
 import DisconnectedState from './components/DisconnectedState.vue';
 import registerGuides from './data/register-guides.json';
 import { InMemorySpiffsClient } from './utils/spiffs/spiffsClient';
-import { requestSerialPort } from './services/connectionService';
 import { useFatfsManager, useLittlefsManager, useSpiffsManager } from './composables/useFilesystemManagers';
 import { useDialogs } from './composables/useDialogs';
 import { readPartitionTable } from './utils/partitions';
-import { createEsptoolClient } from './services/esptoolClient';
+import { createEsptoolClient,requestSerialPort } from './services/esptoolClient';
 import {
   SPIFFS_AUDIO_EXTENSIONS,
   SPIFFS_AUDIO_MIME_MAP,
