@@ -11,6 +11,21 @@ export type SpiffsClient = {
   canFit?: (path: string, size: number) => boolean;
 };
 
+export type LittlefsClient = {
+  list?: (path?: string) => Array<{ name?: string; size?: number; path?: string; type?: string }>;
+  readFile?: (path: string) => any;
+  read?: (path: string) => any;
+  writeFile?: (path: string, data: any) => any;
+  addFile?: (path: string, data: any) => any;
+  delete?: (path: string, options?: { recursive?: boolean }) => any;
+  deleteFile?: (path: string) => any;
+  mkdir?: (path: string) => any;
+  format?: () => any;
+  toImage?: () => any;
+  getUsage?: () => { capacityBytes: number; usedBytes: number; freeBytes: number };
+  canFit?: (path: string, size: number) => boolean;
+};
+
 export type FatfsClient = {
   list?: () => Array<{ name?: string; size?: number; path?: string; type?: string }>;
   writeFile?: (path: string, data: any) => any;
@@ -79,7 +94,7 @@ export function useLittlefsManager(defaultBlockSize: number) {
   const littlefsLoadCancelRequested = ref(false);
   const littlefsState = reactive({
     selectedId: null as number | null,
-    client: null as unknown,
+    client: null as LittlefsClient | null,
     files: [] as Array<{ name?: string; size?: number; path?: string; type?: string }>,
     allFiles: [] as Array<{ name?: string; size?: number; path?: string; type?: string }>,
     currentPath: '/' as string,
