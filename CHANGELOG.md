@@ -1,7 +1,8 @@
 # Changelog
 ## 1.0.9
 - Fixed issues on flash size determination ([issue #8](https://github.com/thelastoutpostworkshop/ESPConnect/issues/8)).
-- Removed duplicate detectFlashSize()
+- Removed duplicate detectFlashSize().
+- Add ESP32-S0WD-OEM and ESP32-D0WD-OEM to chip descriptions by Jason2866 ([PR #55](https://github.com/thelastoutpostworkshop/ESPConnect/pull/55)).
 
 ## 1.0.8
 - Connection Tips asking to put the ESP32 into bootloader mode relies on WebSerial_ESPTool error message : "Couldn't sync to ESP. Try resetting."
