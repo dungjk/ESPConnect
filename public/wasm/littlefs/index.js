@@ -208,10 +208,14 @@ function createClient(Module, blockSize, blockCount) {
         return ptr;
     }
 
-    function readString(ptr) {
+    function readString(ptr, maxLength = 4096) {
         if (!ptr) return "";
         let end = ptr;
-        while (Module.HEAPU8[end] !== 0) end++;
+        const limit = ptr + maxLength;
+        while (end < limit && Module.HEAPU8[end] !== 0) end++;
+        if (end >= limit) {
+            console.warn("[littlefs-wasm] String read truncated at maxLength");
+        }
         return decoder.decode(Module.HEAPU8.subarray(ptr, end));
     }
 
@@ -372,7 +376,10 @@ function createClient(Module, blockSize, blockCount) {
                         }
                     }
                 } catch (e) {
-                    // Directory might be empty or not exist
+                    // Directory might be empty or not exist, log other errors
+                    if (e.code !== -2) { // -2 is ENOENT
+                        console.warn("[littlefs-wasm] Error during recursive delete:", e);
+                    }
                 }
             }
             this.deleteFile(path);
