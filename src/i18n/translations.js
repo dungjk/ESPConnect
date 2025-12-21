@@ -477,6 +477,10 @@ export const translations = {
   
   // 端口繁忙对话框
   'Port Busy': '端口繁忙',
+  'Selected port is busy or in use. Close other apps or tabs using it and try again.': 
+    '所选端口正被占用。请关闭正在使用该端口的其他应用程序或标签页，然后重试。',
+  'If you just disconnected from another tool, wait a moment for the OS to release the port.': 
+    '如果您刚从其他工具断开连接，请稍等片刻让系统释放端口。',
 
   // ==================== 连接过程对话框 ====================
   'Connecting': '正在连接',
