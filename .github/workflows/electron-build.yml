@@ -129,7 +129,8 @@ jobs:
             - ✅ Works completely **offline** - no internet connection required
             - ✅ Native Web Serial API support for all platforms
             - ✅ Flash firmware, manage SPIFFS/LittleFS, backup flash memory
-            - ✅ Device info, partitions viewer, serial monitor
+            - ✅ Device info, partitions viewer, NVS Inspector, serial monitor
+            - ✅ Community translations (Best effort)
             
             ### 📥 Downloads
             
