@@ -17,7 +17,7 @@ ESPConnect is published in two variants:
 
 - **Preview (development build)**  
   👉 https://thelastoutpostworkshop.github.io/ESPConnect/preview/  
-  This version is automatically built from the `main` branch and may include new features, experiments, or breaking changes.
+  This version is automatically built from the `main` branch and may include new fix, features, experiments, or breaking changes. [View current preview changes](CHANGELOG.md)
 
 > ⚠️ The preview build is provided for testing and feedback only.  
 > If you encounter issues, please report them along with whether they occurred on **stable** or **preview**.

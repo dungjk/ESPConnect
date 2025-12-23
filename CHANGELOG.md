@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.1.1
+## 1.1.1-preview
 - Fixed LittleFS now use client getUsage for uploads
 - Serial Monitor: stopping the monitor now automatically returns to maintenance mode (ROM bootloader + stub); use Disconnect to fully close the port.
 - Refactor components to typescript
