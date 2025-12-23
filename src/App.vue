@@ -4015,6 +4015,7 @@ async function setConnectionBaud(targetBaud: string | number, options: SetBaudOp
       }
       loader.value.baudrate = parsed;
       await loader.value.setBaudrate(parsed);
+      await loader.value.sleep(300); // Fix needed for Native USB (0x1001), otherwise an error is raised 
       if (transport.value) {
         transport.value.baudrate = parsed;
       }
