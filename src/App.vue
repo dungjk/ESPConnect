@@ -41,6 +41,25 @@
         <v-select v-model="selectedBaud" :items="baudrateOptions" :label="t('forms.baudRate')" density="compact" variant="outlined"
           hide-details class="status-select"
           :disabled="busy || flashInProgress || maintenanceBusy || baudChangeBusy || monitorActive" />
+        <v-menu offset-y>
+          <template #activator="{ props }">
+            <v-btn variant="text" class="language-toggle-btn"  v-bind="props" :title="languageMenuTitle">
+              {{ currentLanguageLabel }}
+              <v-icon>mdi-menu-down</v-icon>
+            </v-btn>
+          </template>
+          <v-list>
+          <v-list-item
+            v-for="option in languageOptions"
+            :key="option.code"
+            :disabled="option.code === currentLanguage"
+            @click="selectLanguage(option.code)"
+          >
+            <v-list-item-title>{{ option.label }}</v-list-item-title>
+            <v-icon v-if="option.code === currentLanguage" size="16">mdi-check</v-icon>
+          </v-list-item>
+          </v-list>
+        </v-menu>
         <span v-if="higherBaudrateAvailable">
 
           <v-tooltip :text="t('tooltips.higherBaud')" location="bottom">
@@ -55,29 +74,10 @@
         </span>
       </div>
       <v-spacer />
-      <v-btn :title="`Switch to ${isDarkTheme ? 'light' : 'dark'} theme`" variant="text" icon size="small"
-        @click="toggleTheme">
+        <v-btn :title="`Switch to ${isDarkTheme ? 'light' : 'dark'} theme`" variant="text" icon size="small"
+          @click="toggleTheme">
         <v-icon>{{ themeIcon }}</v-icon>
       </v-btn>
-      <v-menu offset-y>
-        <template #activator="{ props }">
-          <v-btn variant="text" class="language-toggle-btn" size="small" v-bind="props" :title="languageMenuTitle">
-            {{ currentLanguageLabel }}
-            <v-icon>mdi-menu-down</v-icon>
-          </v-btn>
-        </template>
-        <v-list>
-          <v-list-item
-            v-for="option in languageOptions"
-            :key="option.code"
-            :disabled="option.code === currentLanguage.value"
-            @click="selectLanguage(option.code)"
-          >
-            <v-list-item-title>{{ option.label }}</v-list-item-title>
-            <v-icon v-if="option.code === currentLanguage.value" size="16">mdi-check</v-icon>
-          </v-list-item>
-        </v-list>
-      </v-menu>
       <v-chip :color="connected ? 'success' : 'grey-darken-1'" class="text-capitalize" variant="elevated"
         density="comfortable">
         <template #prepend>
@@ -691,7 +691,7 @@ import registerGuides from './data/register-guides.json';
 import { InMemorySpiffsClient } from './lib/spiffs/spiffsClient';
 import { useFatfsManager, useLittlefsManager, useSpiffsManager } from './composables/useFilesystemManagers';
 import { useDialogs } from './composables/useDialogs';
-import { getLanguage, setLanguage } from './plugins/i18n';
+import { getLanguage, setLanguage, SupportedLocale } from './plugins/i18n';
 import { readPartitionTable } from './utils/partitions';
 import { createEsptoolClient, requestSerialPort, type CompatibleLoader, type CompatibleTransport, type EsptoolClient } from './services/esptoolClient';
 import {
@@ -4048,7 +4048,7 @@ const themeIcon = computed(() =>
   isDarkTheme.value ? 'mdi-weather-night' : 'mdi-white-balance-sunny'
 );
 
-const currentLanguage = computed(() => getLanguage());
+const currentLanguage = computed<SupportedLocale>(() => getLanguage());
 const languageOptions = computed(() => [
   { code: 'en', label: t('language.english') },
   { code: 'zh', label: t('language.chinese') },
