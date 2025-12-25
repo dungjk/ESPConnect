@@ -1,6 +1,7 @@
 import { createI18n } from 'vue-i18n';
 import en from '../locales/en';
 import zh from '../locales/zh';
+import { en as vuetifyEn, zhHans as vuetifyZhHans } from 'vuetify/locale';
 
 const STORAGE_KEY = 'espconnect-language';
 const supportedLocales = ['en', 'zh'] as const;
@@ -26,18 +27,27 @@ function readStoredLocale(): SupportedLocale {
 
 const locale = readStoredLocale();
 
-export const messages = {
+export const baseMessages = {
   en,
   zh,
+};
+
+const mergedMessages = {
+  en: {
+    ...en,
+    $vuetify: vuetifyEn,
+  },
+  zh: {
+    ...zh,
+    $vuetify: vuetifyZhHans,
+  },
 };
 
 export const i18n = createI18n({
   legacy: false,
   locale,
   fallbackLocale: 'en',
-  messages: {
-    ...messages,
-  },
+  messages: mergedMessages,
 });
 
 export function getLanguage(): SupportedLocale {
