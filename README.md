@@ -85,8 +85,7 @@ ESPConnect is published in two variants:
 
 > ⚠️ The preview build is provided for testing and feedback only.  
 > If you encounter issues, please report them along with whether they occurred on **stable** or **preview**.
-## Localization contributions
-See [CONTRIBUTING.md](CONTRIBUTING.md) for workspace setup, branch/commit conventions, release/testing expectations, and step-by-step translation guidance.
+
 ## Tips & Troubleshooting
 - If automatic boot entry fails, hold **BOOT**, tap **RESET**, keep holding **BOOT** while clicking **Connect**, then release when you see the ESP-ROM banner.  
 - Only one application can use the USB serial bridge at a time. Close Arduino IDE, PlatformIO, or other tools before connecting.  
@@ -95,55 +94,28 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for workspace setup, branch/commit conven
 ### ESP8266 Compatibility
 >ESP8266 devices can connect, but support is very limited.
 The tool cannot read partition tables or access SPIFFS/LittleFS, and advanced features available on ESP32 are not implemented for ESP8266.
+## Contributing
+ESPConnect is open source and contributions are welcome.
+If you want to run ESPConnect locally, work on the codebase, or submit a pull request, please see:
+
+➡️ **[CONTRIBUTING.md](./CONTRIBUTING.md)**
+That document contains development setup instructions, project conventions, and contribution guidelines.
 
 ## Running ESPConnect Locally
->Prerequisite: Node.js **>= 22.12.0**.
 
 ESPConnect is a **pure in-browser web application** — no backend, no installation required, and all operations happen directly in your browser using Web Serial / WebUSB.
 
 ### 1. Run as a Desktop App (Electron)
 Follow installation instructions for your platform in the [latest release](https://github.com/thelastoutpostworkshop/ESPConnect/releases/latest) 
 
-Development (Recommended for Contributors - Electron loads the Vite dev server):
-```bash
-npm install
-npm run dev
-# in another terminal:
-npm run start
-```
-
-### 2. Web application Development Mode (Recommended for Contributors)
-
-```bash
-git clone https://github.com/thelastoutpostworkshop/ESPConnect.git
-cd ESPConnect
-npm install
-npm run dev
-```
-See [CONTRIBUTING.md](CONTRIBUTING.md) for workspace setup, branch/commit conventions, and release/testing expectations.
-### 3. Run ESPConnect via Docker
+### 2. Run ESPConnect via Docker
 
 ```bash
 docker build -t espconnect .
 docker run --rm -p 8080:80 espconnect
 ```
-### 4. Run the Built Version Locally (Static Server)
-Step 1 — Build the App
-```bash
-npm install
-npm run build
-```
-Step 2 — Serve the dist/ Folder, you may use any of the following options:
-> Option A — Node “serve”
-```bash
-cd dist
-npx serve .
-```
-> Option B — Python 3
-```bash
-cd dist
-python -m http.server 8080
-```
+### 3. Run the Built Version Locally (Static Server)
+Follow instructions in the [latest release](https://github.com/thelastoutpostworkshop/ESPConnect/releases/latest) 
 
 ## Privacy & Security
 ESPConnect runs fully in your browser—there is no backend, account, or telemetry. Firmware files, backups, and diagnostics stay local and only move when you download them yourself. Always flash firmware from trusted sources.

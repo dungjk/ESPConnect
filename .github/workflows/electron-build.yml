@@ -184,7 +184,17 @@ jobs:
             curl -L -o dist.zip "https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/dist.zip"
             unzip dist.zip -d dist
             ```
-            
+            Serve the dist/ Folder, you may use any of the following options:
+            > Option A — Node “serve”
+            ```bash
+            cd dist
+            npx serve .
+            ```
+            > Option B — Python 3
+            ```bash
+            cd dist
+            python -m http.server 8080
+            ```
             ### 🔌 USB Serial Permissions (Linux)
             
             Add your user to the `dialout` group:

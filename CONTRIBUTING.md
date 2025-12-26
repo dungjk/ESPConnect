@@ -1,6 +1,6 @@
 # Contributing to ESPConnect
 
-Thanks for contributing!
+Thank you for your interest in contributing to ESPConnect!
 
 ## Quick rules
 - Please open a Pull Request against `main` (direct pushes to `main` are disabled).
@@ -8,12 +8,13 @@ Thanks for contributing!
 - Make sure CI passes.
 
 ## Development
-1. Install deps:
-   - `npm ci`
-2. Run dev server:
-   - `npm run dev`
-3. Build:
-   - `npm run build`
+>Prerequisite: Node.js **>= 22.12.0**.
+```bash
+git clone https://github.com/thelastoutpostworkshop/ESPConnect.git
+cd ESPConnect
+npm install
+npm run dev
+```
 
 ## Code style
 - Run typecheck: `npm run typecheck`
