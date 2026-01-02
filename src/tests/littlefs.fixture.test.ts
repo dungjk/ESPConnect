@@ -1,9 +1,9 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
-import { createLittleFSFromImage, DISK_VERSION_2_1, LittleFSError } from '../wasm/littlefs/index.js';
+type LittleFSModule = typeof import('../wasm/littlefs/index.js');
 
 const FIXTURE_PATH = path.resolve(process.cwd(), 'src/tests/fixtures/fs-images/littlefs/littlefs_v2_1.bin');
 const DEFAULT_WASM_PATH = path.resolve(process.cwd(), 'wasm/littlefs/littlefs.wasm');
@@ -19,7 +19,51 @@ const KNOWN_FILE = '/info.txt';
 const RENAMED_FILE = '/info-renamed.txt';
 const NESTED_FILE_NAME = 'nested_info.txt';
 
-const createFixtureLittleFS = async () => createLittleFSFromImage(new Uint8Array(fixtureImage), { wasmURL });
+const LITTLEFS_JS_PATH = path.resolve(process.cwd(), 'src/wasm/littlefs/littlefs.js');
+const LITTLEFS_UMD_ORIGINAL =
+  'if(typeof exports==="object"&&typeof module==="object"){module.exports=createLittleFS;module.exports.default=createLittleFS}else if(typeof define==="function"&&define["amd"])define([],()=>createLittleFS);';
+const LITTLEFS_UMD_PATCHED =
+  'if(typeof createLittleFS!=="undefined"&&typeof exports==="object"&&typeof module==="object"){try{module.exports=createLittleFS;module.exports.default=createLittleFS}catch{}}else if(typeof define==="function"&&define["amd"]&&typeof createLittleFS!=="undefined")define([],()=>createLittleFS);';
+
+let littlefsOriginalContent: string | null = null;
+let littlefsModule: LittleFSModule | null = null;
+
+function patchLittlefsUmd() {
+  if (littlefsOriginalContent !== null) {
+    return;
+  }
+  const content = readFileSync(LITTLEFS_JS_PATH, 'utf8');
+  littlefsOriginalContent = content;
+
+  if (content.includes(LITTLEFS_UMD_PATCHED)) {
+    return;
+  }
+  if (!content.includes(LITTLEFS_UMD_ORIGINAL)) {
+    throw new Error('Unexpected littlefs.js footer; cannot apply test patch.');
+  }
+
+  writeFileSync(LITTLEFS_JS_PATH, content.replace(LITTLEFS_UMD_ORIGINAL, LITTLEFS_UMD_PATCHED));
+}
+
+function restoreLittlefsUmd() {
+  if (littlefsOriginalContent === null) {
+    return;
+  }
+  writeFileSync(LITTLEFS_JS_PATH, littlefsOriginalContent);
+  littlefsOriginalContent = null;
+}
+
+async function loadLittleFSModule(): Promise<LittleFSModule> {
+  if (!littlefsModule) {
+    littlefsModule = await import('../wasm/littlefs/index.js');
+  }
+  return littlefsModule;
+}
+
+const createFixtureLittleFS = async () => {
+  const { createLittleFSFromImage } = await loadLittleFSModule();
+  return createLittleFSFromImage(new Uint8Array(fixtureImage), { wasmURL });
+};
 
 type LittleFSEntry = { path: string; type: 'file' | 'dir'; size?: number; name?: string };
 
@@ -46,6 +90,9 @@ let originalFetch: typeof fetch;
 let originalConsoleInfo: typeof console.info;
 
 beforeAll(() => {
+  patchLittlefsUmd();
+  process.once('exit', restoreLittlefsUmd);
+
   originalConsoleInfo = console.info;
   console.info = vi.fn();
 
@@ -70,6 +117,7 @@ beforeAll(() => {
 afterAll(() => {
   console.info = originalConsoleInfo;
   globalThis.fetch = originalFetch;
+  restoreLittlefsUmd();
 });
 
 describe('littlefs fixture image', () => {
@@ -90,6 +138,7 @@ describe('littlefs fixture image', () => {
 
   it('reports disk version 2.1', async () => {
     const lfs = await createFixtureLittleFS();
+    const { DISK_VERSION_2_1 } = await loadLittleFSModule();
     expect(lfs.getDiskVersion()).toBe(DISK_VERSION_2_1);
   });
 
@@ -110,6 +159,7 @@ describe('littlefs fixture image', () => {
     lfs.deleteFile('/todelete.bin');
 
     const img2 = lfs.toImage();
+    const { createLittleFSFromImage } = await loadLittleFSModule();
     const lfs2 = await createLittleFSFromImage(img2, { wasmURL });
 
     expect(textDecoder.decode(lfs2.readFile('/newdir/a.txt'))).toBe('abc');
@@ -126,6 +176,7 @@ describe('littlefs fixture image', () => {
     expect(() => lfs.readFile(KNOWN_FILE)).toThrow();
 
     const img3 = lfs.toImage();
+    const { createLittleFSFromImage } = await loadLittleFSModule();
     const lfs2 = await createLittleFSFromImage(img3, { wasmURL });
     const entries = lfs2.list('/');
 
@@ -167,6 +218,7 @@ describe('littlefs fixture image', () => {
     }
 
     expect(caught).toBeTruthy();
+    const { LittleFSError } = await loadLittleFSModule();
     if (caught instanceof LittleFSError) {
       expect(typeof caught.code).toBe('number');
     }
