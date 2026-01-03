@@ -5,6 +5,7 @@
 ### Internal
 - Removed the decorateLoader shim since it's no longer needed with tasmota-webserial-esptool
 - Added Playwright E2E scaffolding with a mocked WebSerial/esptool client
+- Added Vitest for tasmota-webserial-esptool
 
 ## 1.1.4
 ### Improvement

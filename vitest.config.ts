@@ -6,5 +6,10 @@ export default defineConfig({
       'tests/e2e/**',
       'node_modules/**',
     ],
+    server: {
+      deps: {
+        inline: [/tasmota-webserial-esptool/],
+      },
+    },
   },
 });

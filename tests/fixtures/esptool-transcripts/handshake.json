@@ -1,0 +1,21 @@
+{
+  "steps": [
+    { "type": "response", "opcode": "ESP_SYNC", "data": "0000" },
+    {
+      "type": "response",
+      "opcode": "ESP_GET_SECURITY_INFO",
+      "data": "0000000000000000000000001c00000001000000",
+      "status": "00000000"
+    },
+    { "type": "response", "opcode": "ESP_READ_REG", "value": "0xCCDDEEFF" },
+    { "type": "response", "opcode": "ESP_READ_REG", "value": "0x0000AABB" },
+    { "type": "response", "opcode": "ESP_READ_REG", "value": "0x00000000" },
+    { "type": "response", "opcode": "ESP_READ_REG", "value": "0x00000000" },
+    {
+      "type": "response",
+      "opcode": "ESP_GET_SECURITY_INFO",
+      "data": "0000000000000000000000001c00000001000000",
+      "status": "00000000"
+    }
+  ]
+}
