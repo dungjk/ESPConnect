@@ -1,6 +1,11 @@
 # Changelog
 
 ## 1.1.6-preview
+### Internal runtime
+- Bump tasmota-webserial-esptool 7.3.3 to 7.3.4
+
+### Development tooling
+- Bump vite from 7.3.0 to 7.3.1
 
 ## 1.1.5
 ### Improvement
