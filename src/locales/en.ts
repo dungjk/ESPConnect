@@ -224,7 +224,7 @@
       active: 'Active',
       invalid: 'Encrypted/Invalid',
     },
-    subtitle: 'Offset {offset} ? Size {size}',
+    subtitle: 'Offset {offset} — Size {size}',
     details: {
       project: 'Project',
       version: 'Version',

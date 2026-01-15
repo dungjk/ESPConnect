@@ -4622,6 +4622,8 @@ function extractAppDescriptor(buffer: Uint8Array): AppDescriptor | null {
 }
 
 // Determine the active OTA slot from otadata contents.
+const OTA_DATA_SECTOR_BYTES = 0x1000;
+
 function detectActiveOtaSlot(otadata: Uint8Array, otaEntries: PartitionTableEntry[]) {
   const otaCount = otaEntries?.length ?? 0;
   if (!otadata || !otadata.length || !otaCount) {
@@ -4692,9 +4694,22 @@ async function analyzeAppPartitions(loaderInstance: ESPLoader, partitions: Parti
   const otadataEntry = partitions.find(entry => entry.type === 0x01 && entry.subtype === 0x02);
   if (otadataEntry && otaEntries.length) {
     try {
-      const readLength = Math.min(Math.max(OTA_SELECT_ENTRY_SIZE * 2, 64), otadataEntry.size || OTA_SELECT_ENTRY_SIZE * 2);
-      const otadata = await loaderInstance.readFlash(otadataEntry.offset, readLength);
-      const detected = detectActiveOtaSlot(otadata, otaEntries);
+      const otadataChunks: Uint8Array[] = [];
+      const primaryOtadata = await loaderInstance.readFlash(otadataEntry.offset, OTA_SELECT_ENTRY_SIZE);
+      otadataChunks.push(primaryOtadata);
+
+      const secondaryOffset = otadataEntry.offset + OTA_DATA_SECTOR_BYTES;
+      if ((otadataEntry.size ?? 0) >= secondaryOffset + OTA_SELECT_ENTRY_SIZE) {
+        const secondaryOtadata = await loaderInstance.readFlash(secondaryOffset, OTA_SELECT_ENTRY_SIZE);
+        otadataChunks.push(secondaryOtadata);
+      }
+
+      const combinedOtadata = new Uint8Array(Math.max(otadataChunks.length, 1) * OTA_SELECT_ENTRY_SIZE);
+      otadataChunks.forEach((chunk, index) => {
+        combinedOtadata.set(chunk.subarray(0, OTA_SELECT_ENTRY_SIZE), index * OTA_SELECT_ENTRY_SIZE);
+      });
+
+      const detected = detectActiveOtaSlot(combinedOtadata, otaEntries);
       if (detected.slotId) {
         activeSlotId = detected.slotId;
         activeSummary = detected.summary;

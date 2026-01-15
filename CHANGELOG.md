@@ -6,6 +6,9 @@
 - Partitions empty state now distinguishes between disconnected devices and connected ESP32s with no partition table ([issue #104](https://github.com/thelastoutpostworkshop/ESPConnect/issues/104)).
 - Serial Monitor now lets you send text input, including Ctrl+C, suggest by ator1811 ([issue #90](https://github.com/thelastoutpostworkshop/ESPConnect/issues/90)).
 
+### Fixed
+- OTA Apps tab now reads both OTADATA sectors so the active slot indicator updates correctly after OTA swaps ([issue #108](https://github.com/thelastoutpostworkshop/ESPConnect/issues/108)).
+
 ### Internal runtime
 - Bump tasmota-webserial-esptool 7.3.3 to 7.3.4
 - Bump @types/node from 25.0.5 to 25.0.6 

@@ -223,7 +223,7 @@
       active: '激活',
       invalid: '加密/无效',
     },
-    subtitle: '偏移 {offset} • 大小 {size}',
+    subtitle: '偏移 {offset} — 大小 {size}',
     details: {
       project: '项目',
       version: '版本',
