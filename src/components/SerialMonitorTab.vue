@@ -516,7 +516,8 @@ function sendInput(): void {
   if (!text) {
     return;
   }
-  emit('send-monitor-text', text);
+  const lineEnding = text.endsWith('\n') || text.endsWith('\r\n') ? '' : '\n';
+  emit('send-monitor-text', `${text}${lineEnding}`);
   inputText.value = '';
 }
 

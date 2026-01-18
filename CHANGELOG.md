@@ -2,6 +2,9 @@
 
 ## 1.1.7-preview
 
+### Fixed
+- Serial Monitor now appends a newline to every command sent.
+
 ### Internal runtime
 - Bump tasmota-webserial-esptool 7.3.4 to 9.1.9
 - Bump electron from 39.2.7 to 40.0.0
