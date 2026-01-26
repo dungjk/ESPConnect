@@ -2,7 +2,7 @@
 
 ## 1.1.8-preview
 ### Internal runtime
-- Bump tasmota-webserial-esptool 7.3.4 to 7.3.5
+- Bump tasmota-webserial-esptool 7.3.4 to 7.3.7
 
 ## 1.1.7
 ### Fixed
