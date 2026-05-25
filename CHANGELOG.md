@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.14
+### Improvement
+- Added Czech translations. Thanks to macikm for the contribution ([PR #161](https://github.com/thelastoutpostworkshop/ESPConnect/pull/161)).
+
+### Fixed
+- Kept Czech session log diagnostic entries in English to match the app localization rules.
+
 ## 1.1.13
 ### Fixed
 - Electron serial port selection now uses a bounded, scrollable in-app picker so systems with many ports remain easy to use ([issue #160](https://github.com/thelastoutpostworkshop/ESPConnect/issues/160)).
