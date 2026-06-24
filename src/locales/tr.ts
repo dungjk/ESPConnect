@@ -39,11 +39,11 @@ const tr = {
       watchSpecific: '{title} eğitimini izle',
     },
     items: {
-      espconnect: {
-        title: 'ESPConnect',
+      espBoardVault: {
+        title: 'ESP Board Vault',
         description:
-          'ESPConnect, ESP cihazlarıyla çalışmak için tarayıcı tabanlı bir yardımcı araçtır. Tamamen modern bir Chromium tarayıcı içinde çalışır; donanım ayrıntılarını inceleyebilir, SPIFFS, FAT ve LittleFS dosyalarını yönetebilir, flash yedeği alabilir ve firmware yükleyebilirsiniz.',
-        sourceLabel: 'thelastoutpostworkshop/ESPConnect',
+          'ESP Board Vault, ESP32 makerlarının kartlarını taramasına, tanımlamasına, düzenlemesine ve takip etmesine yardımcı olan ücretsiz, yerel öncelikli bir masaüstü envanter uygulamasıdır. Donanım ayrıntıları, bölüm haritaları, fotoğraflar, projeler, kontrol listeleri ve yedeklerle kart kayıtları oluşturun. Hesap yok, bulut backend yok, telemetri yok - her şey bilgisayarınızda kalır.',
+        sourceLabel: 'thelastoutpostworkshop/ESPVault',
       },
       partitionBuilder: {
         title: 'ESP32 Partition Builder',

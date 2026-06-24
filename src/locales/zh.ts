@@ -39,11 +39,11 @@ const zh = {
       watchSpecific: '观看 {title} 教程',
     },
     items: {
-      espconnect: {
-        title: 'ESPConnect',
+      espBoardVault: {
+        title: 'ESP Board Vault',
         description:
-          'ESPConnect 是一个用于操作 ESP 设备的浏览器工具。它完全运行在现代 Chromium 浏览器中，可用于检查硬件详情、管理 SPIFFS、FAT 和 LittleFS 文件、备份 flash，以及部署 firmware。',
-        sourceLabel: 'thelastoutpostworkshop/ESPConnect',
+          'ESP Board Vault 是一款免费的本地优先桌面库存应用，可帮助 ESP32 创客扫描、识别、整理并跟踪他们的开发板。你可以创建包含硬件详情、分区图、照片、项目、清单和备份的开发板记录。无需账号、没有云端后端、没有遥测 - 一切都保留在你的电脑上。',
+        sourceLabel: 'thelastoutpostworkshop/ESPVault',
       },
       partitionBuilder: {
         title: 'ESP32 Partition Builder',

@@ -39,11 +39,11 @@ const cs = {
       watchSpecific: 'Zobrazit návod {title}',
     },
     items: {
-      espconnect: {
-        title: 'ESPConnect',
+      espBoardVault: {
+        title: 'ESP Board Vault',
         description:
-          'ESPConnect je nástroj v prohlížeči pro práci se zařízeními ESP. Běží celý v moderním prohlížeči Chromium, takže můžete kontrolovat hardwarové údaje, spravovat soubory SPIFFS, FAT a LittleFS, zálohovat flash a nahrávat firmware.',
-        sourceLabel: 'thelastoutpostworkshop/ESPConnect',
+          'ESP Board Vault je bezplatná lokální desktopová inventární aplikace, která makerům s ESP32 pomáhá skenovat, identifikovat, organizovat a sledovat jejich desky. Vytvářejte záznamy desek s hardwarovými údaji, mapami oddílů, fotografiemi, projekty, checklisty a zálohami. Žádný účet, žádný cloudový backend, žádná telemetrie - vše zůstává ve vašem počítači.',
+        sourceLabel: 'thelastoutpostworkshop/ESPVault',
       },
       partitionBuilder: {
         title: 'ESP32 Partition Builder',

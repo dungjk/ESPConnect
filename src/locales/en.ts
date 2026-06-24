@@ -39,11 +39,11 @@ const en = {
       watchSpecific: 'Watch {title} tutorial',
     },
     items: {
-      espconnect: {
-        title: 'ESPConnect',
+      espBoardVault: {
+        title: 'ESP Board Vault',
         description:
-          'ESPConnect is a browser-based utility for working with ESP devices. It runs entirely inside a modern Chromium browser so you can inspect hardware details, manage SPIFFS, FAT, LittleFS files, back up flash, and deploy firmware.',
-        sourceLabel: 'thelastoutpostworkshop/ESPConnect',
+          'ESP Board Vault is a free local-first desktop inventory app that helps ESP32 makers scan, identify, organize, and track their boards. Create board records with hardware details, partition maps, photos, projects, checklists, and backups. No account, no cloud backend, no telemetry - everything stays on your computer.',
+        sourceLabel: 'thelastoutpostworkshop/ESPVault',
       },
       partitionBuilder: {
         title: 'ESP32 Partition Builder',

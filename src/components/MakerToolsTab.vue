@@ -2,7 +2,7 @@
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import arduinoMakerWorkshopThumbnail from '../assets/tool-thumbnails/arduino-maker-workshop.jpg';
-import espConnectThumbnail from '../assets/tool-thumbnails/espconnect.jpg';
+import espBoardVaultThumbnail from '../assets/tool-thumbnails/esp-board-vault.jpg';
 import gpioViewerThumbnail from '../assets/tool-thumbnails/gpio-viewer.jpg';
 import partitionBuilderThumbnail from '../assets/tool-thumbnails/partition-builder.jpg';
 import videoConversionThumbnail from '../assets/tool-thumbnails/video-conversion.jpg';
@@ -11,7 +11,7 @@ interface ToolItem {
   key: string;
   titleKey: string;
   icon: string;
-  url: string;
+  url?: string;
   descriptionKey: string;
   thumbnailSrc: string;
   actionIcon?: string;
@@ -35,15 +35,14 @@ const coffeeUrl = 'https://buymeacoffee.com/thelastoutpostworkshop';
 
 const toolItems: ToolItem[] = [
   {
-    key: 'espconnect',
-    titleKey: 'makerTools.items.espconnect.title',
-    icon: 'mdi-connection',
-    url: 'https://thelastoutpostworkshop.github.io/ESPConnect/',
-    descriptionKey: 'makerTools.items.espconnect.description',
-    thumbnailSrc: espConnectThumbnail,
-    sourceUrl: 'https://github.com/thelastoutpostworkshop/ESPConnect',
-    sourceLabelKey: 'makerTools.items.espconnect.sourceLabel',
-    tutorialUrl: 'https://www.youtube.com/watch?v=-nhDKzBxHiI',
+    key: 'esp-board-vault',
+    titleKey: 'makerTools.items.espBoardVault.title',
+    icon: 'mdi-database-lock-outline',
+    descriptionKey: 'makerTools.items.espBoardVault.description',
+    thumbnailSrc: espBoardVaultThumbnail,
+    sourceUrl: 'https://github.com/thelastoutpostworkshop/ESPVault',
+    sourceLabelKey: 'makerTools.items.espBoardVault.sourceLabel',
+    tutorialUrl: 'https://youtu.be/YwYP-eET9Oo',
   },
   {
     key: 'partition-builder',
@@ -107,7 +106,7 @@ function getTutorialActionUrl(tool: ToolItem): string | null {
     return tool.tutorialUrl;
   }
 
-  return getYoutubeVideoId(tool.url) ? tool.url : null;
+  return getYoutubeVideoId(tool.url) ? tool.url ?? null : null;
 }
 
 function getYoutubeVideoId(url: string | null | undefined): string | null {
@@ -234,6 +233,7 @@ function normalizeYoutubeVideoId(value: string | null | undefined): string | nul
           </v-btn>
           <v-spacer />
           <v-btn
+            v-if="tool.url"
             class="maker-tools__action-btn"
             variant="text"
             :prepend-icon="tool.actionIcon ?? 'mdi-open-in-new'"
