@@ -16,7 +16,7 @@ const tr = {
     console: 'Seri Monitör',
     log: 'Session Log',
     about: 'Hakkında',
-    makerTools: 'Maker Tools',
+    makerTools: 'Maker Araçları',
   },
   resources: {
     tutorial: 'Öğretici',

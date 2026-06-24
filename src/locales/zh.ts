@@ -16,7 +16,7 @@ const zh = {
     console: '串口监视器',
     log: '会话日志',
     about: '关于',
-    makerTools: 'Maker Tools',
+    makerTools: '创客工具',
   },
   resources: {
     tutorial: '教程',

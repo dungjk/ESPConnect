@@ -16,7 +16,7 @@ const cs = {
     console: 'Sériový monitor',
     log: 'Protokol relace',
     about: 'O aplikaci',
-    makerTools: 'Maker Tools',
+    makerTools: 'Nástroje pro makery',
   },
   resources: {
     tutorial: 'Návod',

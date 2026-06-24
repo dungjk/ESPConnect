@@ -16,7 +16,7 @@ const de = {
     console: 'Serieller Monitor',
     log: 'Sitzungsprotokoll',
     about: 'Über',
-    makerTools: 'Maker Tools',
+    makerTools: 'Maker-Werkzeuge',
   },
   resources: {
     tutorial: 'Tutorial',

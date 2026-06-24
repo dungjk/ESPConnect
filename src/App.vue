@@ -20,13 +20,13 @@
         <v-list-subheader class="app-drawer__label text-overline text-medium-emphasis">
           {{ t('app.resourcesLabel') }}
         </v-list-subheader>
-        <v-list-item value="makerTools" prepend-icon="mdi-tools" :active="activeTab === 'makerTools'"
-          class="app-drawer__list-item" rounded="lg" @click="activeTab = 'makerTools'">
-          <v-list-item-title>{{ t('navigation.makerTools') }}</v-list-item-title>
-        </v-list-item>
         <v-list-item v-for="link in resourceLinks" :key="link.href" :href="link.href" :prepend-icon="link.icon"
           target="_blank" rel="noopener" class="app-drawer__list-item" rounded="lg">
           <v-list-item-title>{{ link.title }}</v-list-item-title>
+        </v-list-item>
+        <v-list-item value="makerTools" prepend-icon="mdi-tools" :active="activeTab === 'makerTools'"
+          class="app-drawer__list-item" rounded="lg" @click="activeTab = 'makerTools'">
+          <v-list-item-title>{{ t('navigation.makerTools') }}</v-list-item-title>
         </v-list-item>
       </v-list>
     </v-navigation-drawer>

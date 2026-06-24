@@ -16,7 +16,7 @@ const fr = {
     console: 'Moniteur série',
     log: 'Registre',
     about: 'À propos',
-    makerTools: 'Maker Tools',
+    makerTools: 'Outils maker',
   },
   resources: {
     tutorial: 'Tutoriel',
