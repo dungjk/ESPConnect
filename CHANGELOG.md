@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.17
+### Fixed
+- Device Information documentation links now use official Chinese Espressif docs when the UI language is Chinese, with English fallback when localized docs are unavailable ([issue #166](https://github.com/thelastoutpostworkshop/ESPConnect/issues/166)).
+
 ## 1.1.16
 ### Fixed
 - Maker Tools now follows the selected light theme instead of keeping dark cards in light mode.

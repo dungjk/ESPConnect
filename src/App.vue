@@ -2679,6 +2679,57 @@ function buildFactGroups(facts: DeviceFact[]): DeviceFactGroup[] {
   return groups;
 }
 
+const DOCUMENTATION_FACT_LABELS = [
+  'Hardware Reference',
+  'Datasheet',
+  'Technical Reference Manual',
+  'Errata',
+  'Hardware Design Guidelines',
+] as const;
+
+function createDeviceFact(label: string, value: string | null | undefined): DeviceFact | null {
+  if (!value) return null;
+  return {
+    label,
+    value,
+    icon: FACT_ICONS[label] ?? null,
+    translationKey: getFactLabelKey(label),
+  };
+}
+
+function buildDocumentationFacts(chipName: string, locale: string): DeviceFact[] {
+  const docs = findChipDocs(chipName, locale);
+  if (!docs) return [];
+
+  return [
+    createDeviceFact('Hardware Reference', docs.hwReference),
+    createDeviceFact('Datasheet', docs.datasheet),
+    createDeviceFact('Technical Reference Manual', docs.technicalReferenceManual),
+    createDeviceFact('Errata', docs.errata),
+    createDeviceFact('Hardware Design Guidelines', docs.hardwareDesignGuidelines),
+  ].filter((fact): fact is DeviceFact => Boolean(fact));
+}
+
+function refreshDocumentationFacts(locale: string) {
+  const details = chipDetails.value;
+  if (!details?.name) return;
+
+  const documentationFacts = buildDocumentationFacts(details.name, locale);
+  if (!documentationFacts.length) return;
+
+  const documentationLabels = new Set<string>(DOCUMENTATION_FACT_LABELS);
+  const facts = [
+    ...details.facts.filter(fact => !documentationLabels.has(fact.label)),
+    ...documentationFacts,
+  ];
+
+  chipDetails.value = {
+    ...details,
+    facts,
+    factGroups: buildFactGroups(facts),
+  };
+}
+
 // Human-friendly byte formatter with units.
 function formatBytes(bytes: number | null | undefined): string | null {
   if (typeof bytes !== 'number' || !Number.isFinite(bytes) || bytes <= 0) return null;
@@ -4412,7 +4463,8 @@ const languageMenuTitle = computed(() =>
 
 function selectLanguage(code: SupportedLocale) {
   if (code !== currentLanguage.value) {
-    setLanguage(code);
+    const nextLanguage = setLanguage(code);
+    refreshDocumentationFacts(nextLanguage);
   }
 }
 
@@ -6337,13 +6389,8 @@ async function connect() {
       pushFact('eFuse Block Version', `v${metadata.blockVersionMajor}.${metadata.blockVersionMinor}`);
     }
 
-    const docs = esp.chipName ? findChipDocs(esp.chipName) : undefined;
-    if (docs) {
-      pushFact('Hardware Reference', docs.hwReference);
-      pushFact('Datasheet', docs.datasheet);
-      pushFact('Technical Reference Manual', docs.technicalReferenceManual);
-      pushFact('Errata', docs.errata);
-      pushFact('Hardware Design Guidelines', docs.hardwareDesignGuidelines);
+    if (esp.chipName) {
+      facts.push(...buildDocumentationFacts(esp.chipName, currentLanguage.value));
     }
 
     if (esp.securityFacts) {
